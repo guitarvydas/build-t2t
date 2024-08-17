@@ -120,6 +120,7 @@ const grammar = String.raw\`
 
   rewriteRule_withbefore [rwName ws1 lb ws2 rwParameterDefs+ ws3+ rb ws4 before ws7 _eq ws5 rewriteScope ws6] ⎨reset_stacks ‛’ ⎬ = ‛
 «rwName» : function («rwParameterDefs») {
+⎨foreach_arg ‛let ☐ = undefined;’⎬
 let _pre = «before»;
 return_value_stack.push ("");
 rule_name_stack.push ("");
@@ -127,32 +128,33 @@ _.set_top (rule_name_stack, "«rwName»");
 ⎨foreach_parameter ‛☐_stack.push ('');’⎬
 ⎨args_as_string ‛’⎬
 «rewriteScope»
-⎨foreach_parameter ‛☐_stack.pop ('');’⎬
+⎨foreach_parameter ‛☐_stack.pop ();’⎬
 rule_name_stack.pop ();
 return return_value_stack.pop ();
 },’
   
   rewriteRule_plain [rwName ws1 lb ws2 rwParameterDefs+ ws3+ rb ws4 _eq ws5 rewriteScope ws6] ⎨reset_stacks ‛’ ⎬ = ‛
 «rwName» : function («rwParameterDefs») {
+⎨foreach_arg ‛let ☐ = undefined;’⎬
 return_value_stack.push ("");
 rule_name_stack.push ("");
 _.set_top (rule_name_stack, "«rwName»");
 ⎨foreach_parameter ‛☐_stack.push ('');’⎬
 ⎨args_as_string ‛’⎬
 «rewriteScope»
-⎨foreach_parameter ‛☐_stack.pop ('');’⎬
+⎨foreach_parameter ‛☐_stack.pop ();’⎬
 rule_name_stack.pop ();
 return return_value_stack.pop ();
 },’
   
 
   rwRuleName [name] =‛«name»’
-  rwArgDef [name] =‛«name», ⎨memo_arg ‛«name»’ ‛☐ = ☐.rwr ()\n’⎬’
-  rwIterArgDef [name op] = ‛«name», ⎨memo_arg ‛«name»’  ‛☐ = ☐.rwr ().join ('')\n’⎬’
+  rwArgDef [name] =‛_«name», ⎨memo_arg ‛«name»’ ‛☐ = _☐.rwr ()\n’⎬’
+  rwIterArgDef [name op] = ‛_«name», ⎨memo_arg ‛«name»’  ‛☐ = _☐.rwr ().join ('')\n’⎬’
   rwParenthesizedIterArgDef [lb defs+ rb op] = ‛«defs»’
   rwParameterDef [def] = ‛«def»’
   rwArgRef [name] =‛«name»’
-  rwParenArgDef [name ws] = ‛«name», ⎨memo_arg ‛«name»’  ‛☐ = ☐.rwr ().join ('')\n’⎬’
+  rwParenArgDef [name ws] = ‛_«name», ⎨memo_arg ‛«name»’  ‛☐ = _☐.rwr ().join ('')\n’⎬’
 
   rewriteScope_within_support_wrapper [lb ws1 lb2 ws2 name ws3 s ws4 rb2 ws5 scope ws6 rb ws7] = ‛
 _.pre_«name» (\`«s»\`);
@@ -160,7 +162,7 @@ _.pre_«name» (\`«s»\`);
 _.post_«name» (\`«s»\`);’
 
   rewriteScope_with_parameter [lb ws1 name ws2 _eq ws3 rewriteFormatString ws4 rewriteScope ws5 rb ws6] = ‛_.set_top («name»_stack, \`«rewriteFormatString»\`);\n«rewriteScope»’
-  rewriteScope_raw [rewriteFormatString] = ‛_.set_top (return_value_stack, \`«rewriteFormatString»\`);\n’
+  rewriteScope_raw [rewriteFormatString] = ‛⎨args_as_string ‛’⎬\n_.set_top (return_value_stack, \`«rewriteFormatString»\`);\n’
   
   rewriteFormatString [lq formatChars* rq] = ‛«formatChars»’
   formatChar_support_interpolation [lb ws1 name ws2 interpolation_args ws3 rb] = ‛\$\{_.«name» («interpolation_args»)\}’

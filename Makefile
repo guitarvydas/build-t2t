@@ -2,7 +2,7 @@
 
 D2J=./das2json/mac/das2json
 
-t2t:
+t2t: t2t.drawio t2t.t2t 0D/python/std/transpile.drawio
 	${D2J} t2t.drawio
 	${D2J} 0D/python/std/transpile.drawio
 	python3 main.py . 0D/python t2t.t2t main t2t.drawio.json transpile.drawio.json >t2t.mjs
